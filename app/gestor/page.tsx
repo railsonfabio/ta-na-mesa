@@ -34,6 +34,9 @@ export default function GestorPage() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search.includes("onboarding=1")) {
+      setIsOnboardingOpen(true);
+    }
     const data = loadInitialData();
     setTables(data.tables);
     setOrders(data.orders);
