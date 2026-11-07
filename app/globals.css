@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+:root {
+  /* Identidade Visual Oficial v1.1 - Tá na Mesa (A2i Solutions) */
+  --background: #FBF6EF;       /* Creme de Fundo Oficial */
+  --foreground: #231F1C;       /* Carvão Profundo */
+  --terracota: #BD4D2D;        /* Terracota Oficial Primário */
+  --terracota-dark: #A33F23;   /* Terracota Escuro / Hover */
+  --terracota-light: #FBF2EF;  /* Terracota Claro / Destaque */
+  --carvao: #231F1C;           /* Carvão Primário */
+  --creme: #FBF6EF;            /* Creme Oficial */
+  --papel: #FFFDFA;            /* Superfície de Cards e Modais */
+  --garcom: #694838;           /* Perfil Garçom / Salão */
+  --gestao: #302E2D;           /* Perfil Gestão / PDV */
+  --borda: #E7DCD0;            /* Borda Neutra Creme */
+  --borda-subtle: #F0E5D9;     /* Borda Sutil */
+  --verde-status: #10B981;     /* Verde Status Livre / Pronto */
+  --mostarda: #D97706;         /* Destaques / Atenção */
+  --mostarda-light: #FEF6EC;   /* Fundo Chamados */
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar for clean UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8C8B8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #BD4D2D;
+}

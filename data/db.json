@@ -1,0 +1,778 @@
+{
+  "version": 42,
+  "lastUpdated": "2026-11-06T21:40:55.782Z",
+  "tables": [
+    {
+      "id": "t1",
+      "number": 1,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t2",
+      "number": 2,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t3",
+      "number": 3,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t4",
+      "number": 4,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t5",
+      "number": 5,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t6",
+      "number": 6,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t7",
+      "number": 7,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t8",
+      "number": 8,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t9",
+      "number": 9,
+      "status": "livre",
+      "comandas": []
+    },
+    {
+      "id": "t10",
+      "number": 10,
+      "status": "livre",
+      "comandas": []
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-1793998275882",
+      "orderNumber": 105,
+      "type": "delivery",
+      "comandaName": "Fábio Barbosa",
+      "customerName": "Fábio Barbosa",
+      "items": [
+        {
+          "id": "cart-1793998090956-0.7200615182493317",
+          "productId": "cb-1",
+          "name": "Combo Casal Brasa & Burger",
+          "price": 44,
+          "quantity": 1,
+          "optionsSelected": []
+        },
+        {
+          "id": "cart-1793998120978-0.6444261739284524",
+          "productId": "hd-2",
+          "name": "Hot Dog Especial na Nata Gourmet",
+          "price": 18,
+          "quantity": 1,
+          "optionsSelected": []
+        },
+        {
+          "id": "cart-1793998130226-0.7368577721633199",
+          "productId": "pz-1",
+          "name": "Pizza Brotinho Frango com Catupiry",
+          "price": 22,
+          "quantity": 1,
+          "optionsSelected": [
+            "Sem Azeitona"
+          ],
+          "notes": "Tirar: Sem Azeitona"
+        },
+        {
+          "id": "cart-1793998142004-0.5244594623913521",
+          "productId": "bb-2",
+          "name": "Coca-Cola Sem Açúcar 350ml",
+          "price": 6,
+          "quantity": 3,
+          "optionsSelected": []
+        }
+      ],
+      "subtotal": 102,
+      "deliveryFee": 12,
+      "discount": 0,
+      "total": 114,
+      "status": "entregue",
+      "createdAt": "Agora mesmo",
+      "deliveryAddress": "Av. Eng. Roberto Freire, 2150 - Ponta Negra, Natal/RN - Tirol / Petrópolis • [Pagamento: Cartão (Levar Maquininha)]"
+    },
+    {
+      "id": "ord-1793997862773",
+      "orderNumber": 104,
+      "type": "delivery",
+      "comandaName": "Fábio Barbosa",
+      "customerName": "Fábio Barbosa",
+      "items": [
+        {
+          "id": "cart-1793997429781-0.7482535520396391",
+          "productId": "prod-lead-queijo-1793759387034",
+          "name": "Pastel Dois Queijos (Mussarela & Coalho)",
+          "price": 18,
+          "quantity": 1,
+          "optionsSelected": []
+        },
+        {
+          "id": "cart-1793997668381-0.7434669458179661",
+          "productId": "bb-2",
+          "name": "Coca-Cola Sem Açúcar 350ml",
+          "price": 6,
+          "quantity": 1,
+          "optionsSelected": []
+        }
+      ],
+      "subtotal": 24,
+      "deliveryFee": 5,
+      "discount": 5,
+      "total": 24,
+      "status": "entregue",
+      "createdAt": "Agora mesmo",
+      "deliveryAddress": "Av. Eng. Roberto Freire, 2150 - Ponta Negra, Natal/RN • [Pagamento: Pix na Entrega]"
+    }
+  ],
+  "products": [
+    {
+      "id": "pt-2",
+      "name": "Pastel de Camarão com Cream Cheese",
+      "category": "pasteis",
+      "price": 22,
+      "description": "Camarões selecionados salteados no azeite com alho e cheiro verde, envolvidos com cream cheese cremoso e massa estaladiça.",
+      "image": "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=600&auto=format&fit=crop&q=80",
+      "popular": true,
+      "isAvailable": true
+    },
+    {
+      "id": "pt-3",
+      "name": "Pastel Dois Queijos (Mussarela & Coalho)",
+      "category": "pasteis",
+      "price": 18,
+      "description": "Combinação perfeita da liga e puxa da mussarela derretida com o sabor tostado e marcante do queijo de coalho nordestino.",
+      "image": "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=600&auto=format&fit=crop&q=80",
+      "isAvailable": true
+    },
+    {
+      "id": "cb-1",
+      "name": "Combo Casal Brasa & Burger",
+      "category": "combos",
+      "price": 44,
+      "description": "2 Hot Dogs Cheddar e Catupiry completos + 1 Porção Média de Batata Frita Crocante + 1 Refrigerante Guaraná Antarctica 1 Litro geladinho.",
+      "image": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "cb-2",
+      "name": "Combo Smash Individual",
+      "category": "combos",
+      "price": 32,
+      "description": "1 Smash Salada 2.0 (2 carnes 80g com cheddar) + 1 Batata Frita Individual crocante + 1 Coca-Cola Lata 350ml.",
+      "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "cb-3",
+      "name": "Combo Família Premium (4 Pessoas)",
+      "category": "combos",
+      "price": 68,
+      "description": "4 Hot Dogs Tradicionais completos + 1 Batata Frita Suprema com Cheddar e Bacon + 1 Refrigerante 2 Litros.",
+      "image": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "cb-4",
+      "name": "Combo Pizza Brotinho + Refri",
+      "category": "combos",
+      "price": 32,
+      "description": "1 Pizza Brotinho artesanal (sabor à sua escolha) + 1 Guaraná Antarctica 1 Litro gelado.",
+      "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "hd-1",
+      "name": "Hot Dog Cheddar e Catupiry Completo",
+      "category": "hotdogs",
+      "price": 16,
+      "description": "Pão de hot dog quentinho, 2 salsichas, carne moída temperada, frango desfiado, cheddar cremoso, catupiry original, milho, ervilha, vinagrete caseiro e batata palha crocante.",
+      "image": "https://images.unsplash.com/photo-1619740455993-9e612b1af08a?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "hd-2",
+      "name": "Hot Dog Especial na Nata Gourmet",
+      "category": "hotdogs",
+      "price": 18,
+      "description": "Pão de hot dog selado, salsicha, carne de sol desfiada puxada na nata potiguar cremosa, milho, ervilha, vinagrete fresco e batata palha crocante.",
+      "image": "https://images.unsplash.com/photo-1619740455993-9e612b1af08a?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "hd-3",
+      "name": "Hot Dog Tradicional da Casa",
+      "category": "hotdogs",
+      "price": 13,
+      "description": "Pão de hot dog prensado, 2 salsichas, molho especial de tomate caseiro, carne moída, milho, queijo ralado e batata palha.",
+      "image": "https://images.unsplash.com/photo-1619740455993-9e612b1af08a?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "hd-4",
+      "name": "Hot Dog Bacon Crispy Especial",
+      "category": "hotdogs",
+      "price": 19,
+      "description": "Pão prensado na chapa com crosta de manteiga, salsicha, carne moída, frango desfiado, fatias crocantes de bacon, cheddar cremoso e molho verde.",
+      "image": "https://images.unsplash.com/photo-1619740455993-9e612b1af08a?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "bg-1",
+      "name": "Smash Salada 2.0",
+      "category": "burgers",
+      "price": 24,
+      "description": "Pão brioche tostado na manteiga, 2 hambúrgueres smash artesanais de 80g com crostinha, queijo cheddar derretido, alface americana, tomate caipira, cebola roxa e molho especial da casa.",
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "bg-2",
+      "name": "Smash Bacon Artesanal",
+      "category": "burgers",
+      "price": 27,
+      "description": "Pão brioche artesanal, 2 carnes smash de 80g, fatias generosas de bacon crocante, cheddar duplo cremoso e maionese especial temperada.",
+      "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "bg-3",
+      "name": "X-Frango Especial",
+      "category": "burgers",
+      "price": 20,
+      "description": "Pão brioche, peito de frango desfiado temperado, queijo mussarela derretido, presunto fatiado, milho, alface e molho tártaro artesanal.",
+      "image": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "bg-4",
+      "name": "X-Tudo Artesanal da Casa",
+      "category": "burgers",
+      "price": 26,
+      "description": "Pão brioche, hambúrguer artesanal 120g, ovo frito na chapa, bacon crocante, presunto, queijo mussarela derretido, alface, tomate e batata palha.",
+      "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "pz-1",
+      "name": "Pizza Brotinho Frango com Catupiry",
+      "category": "pizzas",
+      "price": 22,
+      "description": "Massa artesanal fina e crocante, molho de tomate pelado, mussarela, peito de frango desfiado temperado, catupiry cremoso e orégano.",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "pz-2",
+      "name": "Pizza Brotinho Calabresa Especial",
+      "category": "pizzas",
+      "price": 20,
+      "description": "Massa crocante, queijo mussarela, fatias finas de calabresa defumada, rodelas de cebola roxa fresca e azeitonas pretas.",
+      "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "pz-3",
+      "name": "Calzone Prensado Quatro Queijos",
+      "category": "pizzas",
+      "price": 24,
+      "description": "Massa artesanal fechada e assada na chapa com recheio farto de queijo mussarela, queijo de coalho potiguar, provolone e catupiry.",
+      "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "pt-1",
+      "name": "Pastel Especial de Carne de Sol com Queijo de Coalho",
+      "category": "pasteis",
+      "price": 14,
+      "description": "Pastel frito na hora com massa sequinha e super crocante, recheio farto de carne de sol desfiada e queijo coalho regional em cubos.",
+      "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "pt-4",
+      "name": "Pastel de Frango com Catupiry",
+      "category": "pasteis",
+      "price": 12,
+      "description": "Peito de frango desfiado suculento com catupiry cremoso e leve toque de milho.",
+      "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "tp-1",
+      "name": "Tapioca de Carne de Sol na Nata",
+      "category": "tapiocas",
+      "price": 16,
+      "description": "Goma de mandioca artesanal peneirada na hora, recheada com carne de sol desfiada e nata fresca potiguar.",
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "tp-2",
+      "name": "Tapioca de Frango com Queijo Coalho",
+      "category": "tapiocas",
+      "price": 14,
+      "description": "Tapioca macia com recheio de frango temperado e fatias de queijo de coalho assadas na chapa com manteiga da terra.",
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "tp-3",
+      "name": "Tapioca Doce Cartola",
+      "category": "tapiocas",
+      "price": 13,
+      "description": "Banana prata fatiada e grelhada na manteiga com queijo coalho derretido, açúcar refinado e canela em pó.",
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "pc-1",
+      "name": "Batata Frita Suprema com Cheddar e Bacon",
+      "category": "porcoes",
+      "price": 22,
+      "description": "Porção generosa de batatas fritas crocantes cobertas com bastante cheddar cremoso e cubos de bacon dourados na hora.",
+      "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "pc-2",
+      "name": "Batata Frita Tradicional Palito",
+      "category": "porcoes",
+      "price": 16,
+      "description": "Batata frita sequinha e crocante temperada com sal fino, servida com maionese especial da casa.",
+      "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "pc-3",
+      "name": "Anéis de Cebola Empanados Crocantes (10 un)",
+      "category": "porcoes",
+      "price": 18,
+      "description": "Anéis de cebola doce empanados com farinha especial, dourados e crocantes, acompanhados de molho barbecue.",
+      "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "pc-4",
+      "name": "Macaxeira Frita na Manteiga da Terra",
+      "category": "porcoes",
+      "price": 18,
+      "description": "Mandioca frita crocante por fora e macia por dentro, finalizada com queijo de coalho ralado e manteiga de garrafa.",
+      "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "bb-1",
+      "name": "Coca-Cola Original 350ml",
+      "category": "bebidas",
+      "price": 6,
+      "description": "Lata 350ml estupidamente gelada.",
+      "image": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "bb-2",
+      "name": "Coca-Cola Sem Açúcar 350ml",
+      "category": "bebidas",
+      "price": 6,
+      "description": "Lata 350ml gelada.",
+      "image": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "bb-3",
+      "name": "Guaraná Antarctica 1 Litro",
+      "category": "bebidas",
+      "price": 10,
+      "description": "Garrafa de 1 litro bem gelada, ideal para compartilhar com a família ou amigos.",
+      "image": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "bb-4",
+      "name": "Suco Natural de Laranja 500ml",
+      "category": "bebidas",
+      "price": 8,
+      "description": "Suco espremido da fruta na hora, 100% natural e bem geladinho.",
+      "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "bb-5",
+      "name": "Suco Natural de Acerola 500ml",
+      "category": "bebidas",
+      "price": 8,
+      "description": "Polpa fresca batida na hora com água gelada.",
+      "image": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "bb-6",
+      "name": "Água Mineral 500ml",
+      "category": "bebidas",
+      "price": 4,
+      "description": "Com ou sem gás, gelada.",
+      "image": "https://images.unsplash.com/photo-1523362628745-0c100150b504?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "sb-1",
+      "name": "Açaí no Copo 500ml Especial",
+      "category": "sobremesas",
+      "price": 18,
+      "description": "Açaí cremoso batido no ponto perfeito, acompanhado de banana fatiada, granola crocante e leite condensado.",
+      "image": "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    },
+    {
+      "id": "sb-2",
+      "name": "Pastel Doce de Nutella com Ninho",
+      "category": "sobremesas",
+      "price": 14,
+      "description": "Pastel frito na hora recheado com bastante creme de avelã Nutella original e coberto com leite Ninho em pó.",
+      "image": "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=600&auto=format&fit=crop&q=80",
+      "popular": true
+    }
+  ],
+  "reviews": [],
+  "settings": {
+    "storeName": "Brasa & Burger Grill",
+    "logoUrl": "/demo_restaurant_logo.svg",
+    "isOpen": true,
+    "minOrderValue": 15,
+    "deliveryType": "bairro",
+    "fixedDeliveryFee": 8,
+    "neighborhoods": [
+      {
+        "neighborhood": "Ponta Negra",
+        "fee": 5,
+        "estimatedMinutes": "25-40 min",
+        "active": true
+      },
+      {
+        "neighborhood": "Capim Macio",
+        "fee": 7,
+        "estimatedMinutes": "30-45 min",
+        "active": true
+      },
+      {
+        "neighborhood": "Neópolis / Pirangi",
+        "fee": 8,
+        "estimatedMinutes": "35-50 min",
+        "active": true
+      },
+      {
+        "neighborhood": "Candelária",
+        "fee": 10,
+        "estimatedMinutes": "40-55 min",
+        "active": true
+      },
+      {
+        "neighborhood": "Lagoa Nova",
+        "fee": 10,
+        "estimatedMinutes": "45-60 min",
+        "active": true
+      },
+      {
+        "neighborhood": "Tirol / Petrópolis",
+        "fee": 12,
+        "estimatedMinutes": "45-60 min",
+        "active": true
+      },
+      {
+        "neighborhood": "Retirada no Balcão (Takeaway)",
+        "fee": 0,
+        "estimatedMinutes": "20-30 min",
+        "active": true
+      }
+    ],
+    "coupons": [
+      {
+        "code": "PRIMEIRACOMPRA",
+        "discountPercent": 10,
+        "active": true
+      },
+      {
+        "code": "FRETEGRATIS",
+        "freeDelivery": true,
+        "active": true
+      },
+      {
+        "code": "QUERO10",
+        "discountPercent": 10,
+        "active": true
+      }
+    ]
+  },
+  "stock": [
+    {
+      "id": "stk-1",
+      "name": "Blend Bovino Artesanal 150g",
+      "category": "carnes",
+      "quantity": 85,
+      "minQuantity": 30,
+      "unit": "un",
+      "unitCost": 4.8,
+      "supplierName": "Frigorífico Potiguar Carnes",
+      "supplierPhone": "(84) 99123-4567",
+      "lastUpdated": "Hoje às 15:30"
+    },
+    {
+      "id": "stk-2",
+      "name": "Smash Bovino na Chapa 80g",
+      "category": "carnes",
+      "quantity": 120,
+      "minQuantity": 40,
+      "unit": "un",
+      "unitCost": 2.6,
+      "supplierName": "Frigorífico Potiguar Carnes",
+      "supplierPhone": "(84) 99123-4567",
+      "lastUpdated": "Hoje às 15:30"
+    },
+    {
+      "id": "stk-3",
+      "name": "Pão Brioche Tradicional c/ Manteiga",
+      "category": "paes_laticinios",
+      "quantity": 18,
+      "minQuantity": 35,
+      "unit": "un",
+      "unitCost": 1.9,
+      "supplierName": "Panificadora Estrela",
+      "supplierPhone": "(84) 99456-7890",
+      "lastUpdated": "Hoje às 14:00"
+    },
+    {
+      "id": "stk-4",
+      "name": "Pão de Hot Dog Selado",
+      "category": "paes_laticinios",
+      "quantity": 64,
+      "minQuantity": 30,
+      "unit": "un",
+      "unitCost": 1.4,
+      "supplierName": "Panificadora Estrela",
+      "supplierPhone": "(84) 99456-7890",
+      "lastUpdated": "Ontem às 18:00"
+    },
+    {
+      "id": "stk-5",
+      "name": "Queijo Mussarela Ralado Especial",
+      "category": "paes_laticinios",
+      "quantity": 2.4,
+      "minQuantity": 5,
+      "unit": "kg",
+      "unitCost": 34,
+      "supplierName": "Distribuidora Laticínios Seridó",
+      "supplierPhone": "(84) 99234-5678",
+      "lastUpdated": "Hoje às 11:20"
+    },
+    {
+      "id": "stk-6",
+      "name": "Cheddar Cremoso Bisnaga Chef",
+      "category": "paes_laticinios",
+      "quantity": 4.8,
+      "minQuantity": 3,
+      "unit": "kg",
+      "unitCost": 38,
+      "supplierName": "Distribuidora Laticínios Seridó",
+      "supplierPhone": "(84) 99234-5678",
+      "lastUpdated": "Ontem às 17:00"
+    },
+    {
+      "id": "stk-7",
+      "name": "Bacon em Fatias Defumado",
+      "category": "carnes",
+      "quantity": 7.5,
+      "minQuantity": 4,
+      "unit": "kg",
+      "unitCost": 32,
+      "supplierName": "Frigorífico Potiguar Carnes",
+      "supplierPhone": "(84) 99123-4567",
+      "lastUpdated": "Hoje às 10:00"
+    },
+    {
+      "id": "stk-8",
+      "name": "Batata Congelada Rústica / Palito (2.5kg)",
+      "category": "hortifruti",
+      "quantity": 14,
+      "minQuantity": 6,
+      "unit": "pct",
+      "unitCost": 28.5,
+      "supplierName": "Distribuidora Nordeste Food",
+      "supplierPhone": "(84) 99345-6789",
+      "lastUpdated": "Ontem às 16:30"
+    },
+    {
+      "id": "stk-9",
+      "name": "Coca-Cola Original 350ml (Lata)",
+      "category": "bebidas",
+      "quantity": 72,
+      "minQuantity": 24,
+      "unit": "un",
+      "unitCost": 3.1,
+      "supplierName": "Distribuidora Potiguar de Bebidas",
+      "supplierPhone": "(84) 98877-6655",
+      "lastUpdated": "Hoje às 12:00"
+    },
+    {
+      "id": "stk-10",
+      "name": "Guaraná Antarctica 1L Gelado",
+      "category": "bebidas",
+      "quantity": 36,
+      "minQuantity": 15,
+      "unit": "un",
+      "unitCost": 4.8,
+      "supplierName": "Distribuidora Potiguar de Bebidas",
+      "supplierPhone": "(84) 98877-6655",
+      "lastUpdated": "Hoje às 12:00"
+    },
+    {
+      "id": "stk-11",
+      "name": "Embalagem Burger Kraft Térmica",
+      "category": "embalagens",
+      "quantity": 260,
+      "minQuantity": 100,
+      "unit": "un",
+      "unitCost": 0.85,
+      "supplierName": "Embalagens & Descartáveis Natal",
+      "supplierPhone": "(84) 99654-3210",
+      "lastUpdated": "Segunda-feira"
+    },
+    {
+      "id": "stk-12",
+      "name": "Sacola Kraft Delivery c/ Lacre de Segurança",
+      "category": "embalagens",
+      "quantity": 180,
+      "minQuantity": 80,
+      "unit": "un",
+      "unitCost": 1.2,
+      "supplierName": "Embalagens & Descartáveis Natal",
+      "supplierPhone": "(84) 99654-3210",
+      "lastUpdated": "Segunda-feira"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "sup-1",
+      "name": "Frigorífico Potiguar Carnes",
+      "category": "Carnes, Blends & Bacon",
+      "contactName": "Marcos Silva (Gerente Comercial)",
+      "phone": "(84) 99123-4567",
+      "email": "pedidos@frigorificopotiguar.com.br",
+      "pixKey": "carnes@frigorificopotiguar.com.br",
+      "deliveryDays": "Segunda, Quarta e Sexta (pela manhã)",
+      "notes": "Entrega em caminhão refrigerado. Pagamento no boleto 15 dias ou Pix com 3% desc."
+    },
+    {
+      "id": "sup-2",
+      "name": "Panificadora Estrela",
+      "category": "Pães Artesanais & Brioches",
+      "contactName": "Dona Fátima (Produção)",
+      "phone": "(84) 99456-7890",
+      "email": "fatima@panificadoraestrela.com.br",
+      "pixKey": "fatima@panificadoraestrela.com.br",
+      "deliveryDays": "Diariamente às 16h (pães quentinhos para o turno noturno)",
+      "notes": "Pães selados e frescos sem conservantes artificiais."
+    },
+    {
+      "id": "sup-3",
+      "name": "Distribuidora Potiguar de Bebidas",
+      "category": "Refrigerantes, Sucos & Cervejas",
+      "contactName": "Carlos Eduardo (Distribuição)",
+      "phone": "(84) 98877-6655",
+      "email": "financeiro@bebidaspotiguar.com.br",
+      "pixKey": "08.452.981/0001-44",
+      "deliveryDays": "Terças e Quintas",
+      "notes": "Pedido mínimo de 5 fardos para frete grátis na região de Ponta Negra."
+    },
+    {
+      "id": "sup-4",
+      "name": "Distribuidora Laticínios Seridó",
+      "category": "Mussarela, Coalho & Queijo Cheddar",
+      "contactName": "Renato Bezerra",
+      "phone": "(84) 99234-5678",
+      "email": "serido@laticinios.com.br",
+      "pixKey": "serido@laticinios.com.br",
+      "deliveryDays": "Segundas e Quintas",
+      "notes": "Queijo coalho artesanal de Caicó/RN e mussarela de alta liga."
+    },
+    {
+      "id": "sup-5",
+      "name": "Embalagens & Descartáveis Natal",
+      "category": "Caixas Térmicas, Sacolas & Lacres",
+      "contactName": "Mariana Lima",
+      "phone": "(84) 99654-3210",
+      "email": "comercial@embalagensnatal.com.br",
+      "pixKey": "embalagens@natal.com.br",
+      "deliveryDays": "Terças-feiras",
+      "notes": "Embalagens kraft biodegradáveis com certificação alimentar."
+    }
+  ],
+  "expenses": [
+    {
+      "id": "exp-1",
+      "description": "Compra Semanal de Blends & Bacon (Frigorífico Potiguar)",
+      "category": "fornecedores",
+      "amount": 1480,
+      "dueDate": "2026-11-10",
+      "status": "pendente",
+      "supplierId": "sup-1",
+      "paymentMethod": "Boleto Bancário (15 dias)"
+    },
+    {
+      "id": "exp-2",
+      "description": "Fornecimento de Pães Brioche e Hot Dog (Panificadora Estrela)",
+      "category": "fornecedores",
+      "amount": 680,
+      "dueDate": "2026-11-08",
+      "status": "pendente",
+      "supplierId": "sup-2",
+      "paymentMethod": "Pix"
+    },
+    {
+      "id": "exp-3",
+      "description": "Aluguel do Salão & Ponto Comercial (Ponta Negra)",
+      "category": "aluguel_fixo",
+      "amount": 3200,
+      "dueDate": "2026-11-05",
+      "paidDate": "2026-11-05",
+      "status": "pago",
+      "paymentMethod": "Transferência Bancária"
+    },
+    {
+      "id": "exp-4",
+      "description": "Cosern - Energia Elétrica Comercial (Outubro)",
+      "category": "energia_agua_gas",
+      "amount": 1140,
+      "dueDate": "2026-11-15",
+      "status": "pendente",
+      "paymentMethod": "Boleto"
+    },
+    {
+      "id": "exp-5",
+      "description": "Ultragaz - 2 Cilindros Gás Industrial P45",
+      "category": "energia_agua_gas",
+      "amount": 580,
+      "dueDate": "2026-11-02",
+      "paidDate": "2026-11-02",
+      "status": "pago",
+      "paymentMethod": "Pix"
+    },
+    {
+      "id": "exp-6",
+      "description": "Lote de Sacolas e Caixas Kraft Personalizadas",
+      "category": "fornecedores",
+      "amount": 450,
+      "dueDate": "2026-11-12",
+      "status": "pendente",
+      "supplierId": "sup-5",
+      "paymentMethod": "Boleto"
+    }
+  ]
+}

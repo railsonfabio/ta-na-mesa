@@ -1,0 +1,8 @@
+TÁ NA MESA | KIT DE IDENTIDADE VISUAL 1.1
+
+Ícone aprovado: SVG de 62 unidades em quadrado de 76 unidades, com 7 unidades de folga por lado.
+Descritor: Restaurantes e Delivery.
+
+A pasta svg contém os vetores para site, aplicativo, apresentação, papel timbrado, redes e marca d'água. A pasta png contém as exportações rasterizadas. O guia HTML mostra aplicações e orienta a escolha.
+
+Cores e tipografia são propostas de trabalho. Assinaturas em SVG usam Arial/Helvetica e ainda precisam de conversão do texto em curvas para impressão comercial. O símbolo é a reconstrução vetorial do estudo aprovado e merece revisão fina antes do lançamento.

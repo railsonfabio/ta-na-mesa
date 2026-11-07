@@ -1,0 +1,16 @@
+{
+  "name": "Tá na Mesa • Restaurantes e Delivery",
+  "short_name": "Tá na Mesa",
+  "description": "Uma experiência à mesa. Atendimento, pedidos e acompanhamento em tempo real para Restaurantes e Delivery. Plataforma oficial A2i Solutions com Alô Classificados.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBF6EF",
+  "theme_color": "#BD4D2D",
+  "icons": [
+    {
+      "src": "/brand/png/icone-app-cliente.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
