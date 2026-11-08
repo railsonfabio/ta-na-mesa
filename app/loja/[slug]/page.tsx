@@ -94,10 +94,15 @@ function TenantStorefrontContent() {
 
       try {
         const supabase = getSupabaseBrowserClient();
+        const candidateSlugs =
+          slug === "brasa-burger" || slug === "brasa-burger-grill"
+            ? ["brasa-burger-grill", "brasa-burger"]
+            : [slug];
         const { data: storeRow, error } = await supabase
           .from("stores")
           .select("id, slug, store_name, is_open")
-          .eq("slug", slug)
+          .in("slug", candidateSlugs)
+          .limit(1)
           .maybeSingle();
 
         if (!isMounted) return;

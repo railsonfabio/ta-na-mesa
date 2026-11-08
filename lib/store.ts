@@ -3,7 +3,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient, type RealtimeChannel } from "@supabase/supabase-js";
 import { Table, Order, Comanda, CartItem, ProductItem } from "./types";
-import { INITIAL_TABLES, INITIAL_ORDERS, PRODUCTS } from "./mock-data";
+import {
+  INITIAL_TABLES,
+  INITIAL_ORDERS,
+  PRODUCTS,
+  DEMO_SIMULATION_TABLES,
+  DEMO_SIMULATION_ORDERS,
+} from "./mock-data";
 import type { StoreSettings } from "./server-db";
 import {
   getSupabaseBrowserClient,
@@ -558,12 +564,21 @@ export function saveStateToStorage(
  * filtradas pelo `store_id` ativo, disparando eventos WebSocket (`postgres_changes`)
  * automaticamente para todos os terminais conectados (/gestor, /cozinha, /garcom e cliente).
  */
+function toValidTimestamptzOrNull(val?: string | null): string | null {
+  if (!val) return null;
+  const parsed = Date.parse(val);
+  if (!Number.isNaN(parsed)) {
+    return new Date(parsed).toISOString();
+  }
+  return new Date().toISOString();
+}
+
 export async function syncStateWithServer(
   tables: Table[],
   orders: Order[],
   reviews?: CustomerReview[],
   products?: ProductItem[],
-  _settings?: any,
+  settings?: any,
   _notification?: string,
   _stock?: any[],
   _suppliers?: any[],
@@ -602,7 +617,26 @@ export async function syncStateWithServer(
   try {
     const supabase = getSupabaseBrowserClient();
 
-    // 1. Upsert das mesas (`restaurant_tables`) da loja
+    // 0. Se houver atualização de configurações da loja, persiste em `stores`
+    if (settings && settings.storeName) {
+      await supabase
+        .from("stores")
+        .update({
+          store_name: settings.storeName,
+          is_open: settings.isOpen !== false,
+          min_order_value: settings.minOrderValue ?? 15,
+          delivery_type: settings.deliveryType || "bairro",
+          fixed_delivery_fee: settings.fixedDeliveryFee ?? 8,
+          pix_key: settings.pixKey || null,
+          phone: settings.phone || null,
+          address: settings.address || null,
+          opening_hours: settings.openingHours || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", storeId);
+    }
+
+    // 1. Upsert das mesas (`restaurant_tables`) e comandas abertas (`comandas` / `comanda_items`)
     if (tables && tables.length > 0) {
       const tablePayload = tables.map((t) => ({
         store_id: storeId,
@@ -611,22 +645,106 @@ export async function syncStateWithServer(
         call_reason: t.callReason || null,
         assigned_waiter: t.assignedWaiter || null,
         sector: t.sector || "salao",
-        opened_at: t.openedAt || null,
+        opened_at: toValidTimestamptzOrNull(t.openedAt),
         updated_at: new Date().toISOString(),
       }));
 
-      await supabase
+      const { data: savedTables } = await supabase
         .from("restaurant_tables")
-        .upsert(tablePayload, { onConflict: "store_id,table_number" });
+        .upsert(tablePayload, { onConflict: "store_id,table_number" })
+        .select("id, table_number");
+
+      const tableIdByNumber = new Map<number, string>();
+      (savedTables || []).forEach((st: any) => {
+        tableIdByNumber.set(Number(st.table_number), String(st.id));
+      });
+
+      for (const t of tables) {
+        const dbTableId = tableIdByNumber.get(t.number);
+        if (!dbTableId || !Array.isArray(t.comandas)) continue;
+
+        for (const com of t.comandas) {
+          const isComUuid =
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+              com.id
+            );
+
+          const comandaPayload: Record<string, any> = {
+            store_id: storeId,
+            table_id: dbTableId,
+            table_number: t.number,
+            customer_name: com.customerName || "Cliente",
+            is_connected_via_phone: Boolean(com.isConnectedViaPhone),
+            status: com.status === "paga" ? "paga" : "aberta",
+            total: Number(com.total || 0),
+          };
+          if (isComUuid) {
+            comandaPayload.id = com.id;
+          }
+
+          const { data: savedCom } = await supabase
+            .from("comandas")
+            .upsert(comandaPayload)
+            .select("id")
+            .single();
+
+          if (savedCom?.id && Array.isArray(com.items) && com.items.length > 0) {
+            await supabase
+              .from("comanda_items")
+              .delete()
+              .eq("comanda_id", savedCom.id)
+              .eq("store_id", storeId);
+
+            const comItemsPayload = com.items.map((ci) => ({
+              store_id: storeId,
+              comanda_id: savedCom.id,
+              name: ci.name,
+              price: ci.price,
+              quantity: ci.quantity,
+              options_selected: ci.optionsSelected || [],
+              notes: ci.notes || null,
+              prep_sector: ci.prepSector || "chapa",
+              is_ready: Boolean(ci.isReady),
+            }));
+
+            await supabase.from("comanda_items").insert(comItemsPayload);
+          }
+        }
+      }
     }
 
     // 2. Upsert dos pedidos (`orders`) e seus itens (`order_items`) da loja
     if (orders && orders.length > 0) {
       for (const ord of orders) {
+        let resolvedOrderId: string | undefined = undefined;
         const isUuid =
           /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
             ord.id
           );
+
+        if (isUuid) {
+          resolvedOrderId = ord.id;
+        } else {
+          try {
+            const rawMap = localStorage.getItem("tanamesa_tracked_order_uuids_v1");
+            const uuidMap = rawMap ? JSON.parse(rawMap) : {};
+            if (uuidMap[String(ord.orderNumber)]) {
+              resolvedOrderId = uuidMap[String(ord.orderNumber)];
+            }
+          } catch {}
+
+          if (!resolvedOrderId) {
+            const { data: existingOrd } = await supabase
+              .from("orders")
+              .select("id")
+              .eq("store_id", storeId)
+              .eq("order_number", ord.orderNumber)
+              .maybeSingle();
+            if (existingOrd?.id) {
+              resolvedOrderId = existingOrd.id;
+            }
+          }
+        }
 
         const orderPayload: Record<string, any> = {
           store_id: storeId,
@@ -651,12 +769,12 @@ export async function syncStateWithServer(
           coupon_code: ord.couponCode || null,
           courier_name: ord.courierName || null,
           courier_phone: ord.courierPhone || null,
-          accepted_at: ord.acceptedAt || null,
-          dispatched_at: ord.dispatchedAt || null,
+          accepted_at: toValidTimestamptzOrNull(ord.acceptedAt),
+          dispatched_at: toValidTimestamptzOrNull(ord.dispatchedAt),
         };
 
-        if (isUuid) {
-          orderPayload.id = ord.id;
+        if (resolvedOrderId) {
+          orderPayload.id = resolvedOrderId;
         }
 
         const { data: savedOrder } = await supabase
@@ -885,10 +1003,11 @@ export async function resetCleanStateOnServer(_notification?: string) {
 }
 
 export async function seedDemoStateOnServer(_notification?: string) {
-  saveStateToStorage(INITIAL_TABLES, INITIAL_ORDERS);
+  saveStateToStorage(DEMO_SIMULATION_TABLES, DEMO_SIMULATION_ORDERS);
+  await syncStateWithServer(DEMO_SIMULATION_TABLES, DEMO_SIMULATION_ORDERS);
   return {
-    tables: INITIAL_TABLES,
-    orders: INITIAL_ORDERS,
+    tables: DEMO_SIMULATION_TABLES,
+    orders: DEMO_SIMULATION_ORDERS,
     products: PRODUCTS,
     reviews: [],
   };
