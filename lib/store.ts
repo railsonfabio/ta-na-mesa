@@ -396,6 +396,7 @@ export async function fetchStoreOperationalStateFromSupabase(
       id: String(rv.id),
       customerName: String(rv.customer_name || "Cliente"),
       rating: Number(rv.rating || 5),
+      tags: Array.isArray(rv.tags) ? rv.tags : [],
       comment: String(rv.comment || ""),
       createdAt: rv.created_at
         ? new Date(rv.created_at).toLocaleDateString("pt-BR")
