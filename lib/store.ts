@@ -229,15 +229,25 @@ export async function fetchStoreOperationalStateFromSupabase(
   comandas: Comanda[];
   products: ProductItem[];
   settings?: StoreSettings;
+  reviews?: CustomerReview[];
+  stock?: any[];
+  suppliers?: any[];
+  expenses?: any[];
 } | null> {
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
+    console.warn(
+      "[Supabase Sync] NEXT_PUBLIC_SUPABASE_URL ou NEXT_PUBLIC_SUPABASE_ANON_KEY ausentes no ambiente."
+    );
     return null;
   }
 
   const supabase = getSupabaseBrowserClient();
+  console.info(
+    `[Supabase Sync] Iniciando fetch operacional para store_id=${storeId}...`
+  );
 
   const [
     storeRes,
@@ -250,6 +260,10 @@ export async function fetchStoreOperationalStateFromSupabase(
     tablesRes,
     comandasRes,
     comandaItemsRes,
+    reviewsRes,
+    stockRes,
+    suppliersRes,
+    expensesRes,
   ] = await Promise.all([
     supabase.from("stores").select("*").eq("id", storeId).maybeSingle(),
     supabase
@@ -281,9 +295,50 @@ export async function fetchStoreOperationalStateFromSupabase(
       .eq("store_id", storeId)
       .eq("status", "aberta"),
     supabase.from("comanda_items").select("*").eq("store_id", storeId),
+    supabase
+      .from("customer_reviews")
+      .select("*")
+      .eq("store_id", storeId)
+      .order("created_at", { ascending: false }),
+    supabase.from("stock_items").select("*").eq("store_id", storeId),
+    supabase.from("suppliers").select("*").eq("store_id", storeId),
+    supabase.from("financial_expenses").select("*").eq("store_id", storeId),
   ]);
 
+  const queryErrors = [
+    { table: "stores", err: storeRes.error },
+    { table: "store_neighborhoods", err: neighborhoodsRes.error },
+    { table: "store_coupons", err: couponsRes.error },
+    { table: "store_couriers", err: couriersRes.error },
+    { table: "products", err: productsRes.error },
+    { table: "orders", err: ordersRes.error },
+    { table: "order_items", err: orderItemsRes.error },
+    { table: "restaurant_tables", err: tablesRes.error },
+    { table: "comandas", err: comandasRes.error },
+    { table: "comanda_items", err: comandaItemsRes.error },
+    { table: "customer_reviews", err: reviewsRes.error },
+    { table: "stock_items", err: stockRes.error },
+    { table: "suppliers", err: suppliersRes.error },
+    { table: "financial_expenses", err: expensesRes.error },
+  ].filter((q) => Boolean(q.err));
+
+  if (queryErrors.length > 0) {
+    console.error(
+      `[Supabase Sync] Detectados ${queryErrors.length} erro(s) de leitura/RLS para store_id=${storeId}:`,
+      queryErrors.map((q) => ({
+        table: q.table,
+        code: q.err?.code,
+        message: q.err?.message,
+        details: q.err?.details,
+        hint: q.err?.hint,
+      }))
+    );
+  }
+
   if (ordersRes.error && tablesRes.error && storeRes.error) {
+    console.error(
+      "[Supabase Sync] Falha crítica ao buscar estado operacional no Supabase (stores, orders e restaurant_tables falharam simultaneamente)."
+    );
     return null;
   }
 
@@ -293,6 +348,18 @@ export async function fetchStoreOperationalStateFromSupabase(
   const rawComandas = comandasRes.data || [];
   const rawComandaItems = comandaItemsRes.data || [];
   const rawProducts = productsRes.data || [];
+
+  console.info(
+    `[Supabase Sync] Estado carregado com sucesso (store_id=${storeId}):`,
+    {
+      store: storeRes.data?.store_name || "N/A",
+      products: rawProducts.length,
+      tables: rawTables.length,
+      comandas: rawComandas.length,
+      orders: rawOrders.length,
+      orderItems: rawOrderItems.length,
+    }
+  );
 
   const mappedOrders: Order[] = rawOrders.map((ord) =>
     mapDbOrderToOrder(
@@ -324,12 +391,61 @@ export async function fetchStoreOperationalStateFromSupabase(
       )
     : undefined;
 
+  const mappedReviews: CustomerReview[] = (reviewsRes.data || []).map(
+    (rv: any) => ({
+      id: String(rv.id),
+      customerName: String(rv.customer_name || "Cliente"),
+      rating: Number(rv.rating || 5),
+      comment: String(rv.comment || ""),
+      createdAt: rv.created_at
+        ? new Date(rv.created_at).toLocaleDateString("pt-BR")
+        : "Hoje",
+      tableNumber: rv.table_number ? Number(rv.table_number) : undefined,
+    })
+  );
+
+  const mappedStock = (stockRes.data || []).map((st: any) => ({
+    id: String(st.id),
+    name: String(st.name),
+    category: st.category || "outros",
+    unit: st.unit || "un",
+    currentQuantity: Number(st.current_quantity ?? 0),
+    minQuantity: Number(st.min_quantity ?? 5),
+    unitCost: Number(st.unit_cost ?? 0),
+    supplierId: st.supplier_id ? String(st.supplier_id) : undefined,
+    lastRestockedAt: st.last_restocked_at || undefined,
+  }));
+
+  const mappedSuppliers = (suppliersRes.data || []).map((sp: any) => ({
+    id: String(sp.id),
+    name: String(sp.name),
+    category: String(sp.category || "Geral"),
+    phone: String(sp.phone || ""),
+    contactPerson: sp.contact_person || undefined,
+    lastOrderDate: sp.last_order_date || undefined,
+  }));
+
+  const mappedExpenses = (expensesRes.data || []).map((ex: any) => ({
+    id: String(ex.id),
+    title: String(ex.title),
+    category: ex.category || "outros",
+    amount: Number(ex.amount ?? 0),
+    date: String(ex.expense_date || ""),
+    status: ex.status || "pago",
+    supplierId: ex.supplier_id ? String(ex.supplier_id) : undefined,
+    notes: ex.notes || undefined,
+  }));
+
   return {
     orders: mappedOrders,
     tables: mappedTables,
     comandas: allComandas,
     products: mappedProducts,
     settings: mappedSettings,
+    reviews: mappedReviews,
+    stock: mappedStock.length > 0 ? mappedStock : undefined,
+    suppliers: mappedSuppliers.length > 0 ? mappedSuppliers : undefined,
+    expenses: mappedExpenses.length > 0 ? mappedExpenses : undefined,
   };
 }
 
@@ -649,10 +765,17 @@ export async function syncStateWithServer(
         updated_at: new Date().toISOString(),
       }));
 
-      const { data: savedTables } = await supabase
+      const { data: savedTables, error: tablesUpsertErr } = await supabase
         .from("restaurant_tables")
         .upsert(tablePayload, { onConflict: "store_id,table_number" })
         .select("id, table_number");
+
+      if (tablesUpsertErr) {
+        console.error(
+          `[Supabase Sync] Erro ao sincronizar restaurant_tables (store_id=${storeId}):`,
+          tablesUpsertErr
+        );
+      }
 
       const tableIdByNumber = new Map<number, string>();
       (savedTables || []).forEach((st: any) => {
@@ -682,11 +805,18 @@ export async function syncStateWithServer(
             comandaPayload.id = com.id;
           }
 
-          const { data: savedCom } = await supabase
+          const { data: savedCom, error: comandaUpsertErr } = await supabase
             .from("comandas")
             .upsert(comandaPayload)
             .select("id")
             .single();
+
+          if (comandaUpsertErr) {
+            console.error(
+              `[Supabase Sync] Erro ao sincronizar comanda (mesa=${t.number}, store_id=${storeId}):`,
+              comandaUpsertErr
+            );
+          }
 
           if (savedCom?.id && Array.isArray(com.items) && com.items.length > 0) {
             await supabase
@@ -707,7 +837,15 @@ export async function syncStateWithServer(
               is_ready: Boolean(ci.isReady),
             }));
 
-            await supabase.from("comanda_items").insert(comItemsPayload);
+            const { error: comItemsErr } = await supabase
+              .from("comanda_items")
+              .insert(comItemsPayload);
+            if (comItemsErr) {
+              console.error(
+                `[Supabase Sync] Erro ao inserir comanda_items (comanda_id=${savedCom.id}):`,
+                comItemsErr
+              );
+            }
           }
         }
       }
@@ -777,11 +915,18 @@ export async function syncStateWithServer(
           orderPayload.id = resolvedOrderId;
         }
 
-        const { data: savedOrder } = await supabase
+        const { data: savedOrder, error: orderUpsertErr } = await supabase
           .from("orders")
           .upsert(orderPayload)
           .select("id")
           .single();
+
+        if (orderUpsertErr) {
+          console.error(
+            `[Supabase Sync] Erro ao sincronizar pedido #${ord.orderNumber} (store_id=${storeId}):`,
+            orderUpsertErr
+          );
+        }
 
         if (savedOrder?.id) {
           try {
@@ -814,12 +959,20 @@ export async function syncStateWithServer(
             is_ready: Boolean(it.isReady),
           }));
 
-          await supabase.from("order_items").insert(itemsPayload);
+          const { error: orderItemsErr } = await supabase
+            .from("order_items")
+            .insert(itemsPayload);
+          if (orderItemsErr) {
+            console.error(
+              `[Supabase Sync] Erro ao inserir order_items do pedido #${ord.orderNumber}:`,
+              orderItemsErr
+            );
+          }
         }
       }
     }
   } catch (err) {
-    console.error("Erro sincronizando com Supabase:", err);
+    console.error("[Supabase Sync] Exceção não tratada ao sincronizar com Supabase:", err);
   }
 }
 
@@ -848,16 +1001,23 @@ export function initRealtimeSync(
   let isDisposed = false;
 
   resolveActiveStoreId().then(async (storeId) => {
-    if (isDisposed || !storeId) return;
+    if (isDisposed || !storeId) {
+      console.warn("[Supabase Sync] initRealtimeSync abortado: storeId ausente ou componente desmontado.", { storeId, isDisposed });
+      return;
+    }
 
     const initial = await fetchStoreOperationalStateFromSupabase(storeId);
     if (initial && !isDisposed) {
-      saveStateToStorage(initial.tables, initial.orders, undefined, initial.products);
+      saveStateToStorage(initial.tables, initial.orders, initial.reviews, initial.products);
       onStateUpdate({
         tables: initial.tables,
         orders: initial.orders,
         products: initial.products,
         settings: initial.settings,
+        reviews: initial.reviews,
+        stock: initial.stock,
+        suppliers: initial.suppliers,
+        expenses: initial.expenses,
       });
     }
 

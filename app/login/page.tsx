@@ -566,7 +566,16 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#faf7f2]" />}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#faf7f2] flex flex-col items-center justify-center gap-3 text-stone-600">
+          <Loader2 className="w-8 h-8 animate-spin text-[#BD4D2D]" />
+          <p className="text-xs font-bold uppercase tracking-widest">
+            Carregando Portal Operacional...
+          </p>
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );
