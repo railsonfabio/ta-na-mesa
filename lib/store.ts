@@ -123,6 +123,7 @@ function mapDbTableAndComandasToTable(
       isConnectedViaPhone: Boolean(c.is_connected_via_phone),
       items: cItems,
       total: Number(c.total || 0),
+      paidAmount: Number(c.paid_amount || 0),
       status: c.status === "paga" ? "paga" : "aberta",
     };
   });
@@ -801,6 +802,7 @@ export async function syncStateWithServer(
             is_connected_via_phone: Boolean(com.isConnectedViaPhone),
             status: com.status === "paga" ? "paga" : "aberta",
             total: Number(com.total || 0),
+            paid_amount: Number(com.paidAmount || 0),
           };
           if (isComUuid) {
             comandaPayload.id = com.id;

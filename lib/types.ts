@@ -48,6 +48,7 @@ export interface Comanda {
   status: "aberta" | "paga";
   items: CartItem[];
   total: number;
+  paidAmount?: number;
 }
 
 export interface Table {

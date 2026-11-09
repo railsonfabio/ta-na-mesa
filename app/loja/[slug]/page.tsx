@@ -319,6 +319,60 @@ function TenantStorefrontContent() {
     );
   };
 
+  const handleRegisterPayment = (
+    tableNumber: number,
+    comandaId: string | undefined,
+    amount: number,
+    method: string
+  ) => {
+    const updated = tables.map((tbl) => {
+      if (tbl.number === tableNumber) {
+        let remainingToDistribute = amount;
+
+        const updatedComandas = tbl.comandas.map((cmd) => {
+          if (!comandaId || cmd.id === comandaId) {
+            const addPay = comandaId
+              ? amount
+              : Math.min(
+                  remainingToDistribute,
+                  Math.max(0, cmd.total - (cmd.paidAmount || 0))
+                );
+            remainingToDistribute -= addPay;
+            const newPaid = (cmd.paidAmount || 0) + addPay;
+            return {
+              ...cmd,
+              paidAmount: newPaid,
+              status:
+                newPaid >= cmd.total && cmd.total > 0
+                  ? ("paga" as const)
+                  : cmd.status,
+            };
+          }
+          return cmd;
+        });
+
+        const totalCons = updatedComandas.reduce((s, c) => s + c.total, 0);
+        const totalPaid = updatedComandas.reduce(
+          (s, c) => s + (c.paidAmount || 0),
+          0
+        );
+        const allPaid = totalPaid >= totalCons && totalCons > 0;
+
+        return {
+          ...tbl,
+          status: allPaid ? ("pedindo_conta" as const) : tbl.status,
+          comandas: updatedComandas,
+        };
+      }
+      return tbl;
+    });
+
+    const notif = `💳 Mesa ${tableNumber}: Pagamento de R$ ${amount.toFixed(
+      2
+    )} (${method.toUpperCase()}) registrado!`;
+    syncTenantState(updated, orders, reviews, notif);
+  };
+
   const handleSaveReview = (review: {
     customerName: string;
     tableNumber?: number;
@@ -395,6 +449,7 @@ function TenantStorefrontContent() {
             onCallWaiter={handleCallWaiter}
             onPlaceOrder={handlePlaceOrder}
             onAddSubcomanda={handleAddSubcomanda}
+            onRegisterPayment={handleRegisterPayment}
             isAloReferral={isAloReferral}
           />
         </main>

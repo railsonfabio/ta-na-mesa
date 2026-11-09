@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { ProductDetailModal } from "./ProductDetailModal";
 import { ProductImageModal } from "./ProductImageModal";
+import { BillSplitModal } from "./BillSplitModal";
 import { StoreSettings, DeliverySetting } from "../lib/server-db";
 import { generatePixBrCode } from "../lib/pix-brcode";
 import { subscribeToCustomerOrderRealtime } from "../lib/store";
@@ -51,6 +52,12 @@ interface CustomerViewProps {
   onCallWaiter: (tableNumber: number, reason: string) => void;
   onPlaceOrder: (order: Partial<Order>) => void;
   onAddSubcomanda: (tableNumber: number, name: string) => void;
+  onRegisterPayment?: (
+    tableNumber: number,
+    comandaId: string | undefined,
+    amount: number,
+    method: string
+  ) => void;
   isAloReferral?: boolean;
 }
 
@@ -77,6 +84,7 @@ export function CustomerView({
   onCallWaiter,
   onPlaceOrder,
   onAddSubcomanda,
+  onRegisterPayment,
   isAloReferral,
 }: CustomerViewProps) {
   const [selectedCategory, setSelectedCategory] = useState("destaques");
@@ -1949,110 +1957,17 @@ export function CustomerView({
         </div>
       )}
 
-      {/* Modal de Divisão de Conta Inteligente (Salão) */}
+      {/* Modal Avançado de Divisão de Conta & Comandas Personalizadas (Inspirado no Stitch) */}
       {isSplitModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-md p-5 shadow-2xl border border-[#EFE9DF]">
-            <div className="flex items-center justify-between pb-3 border-b border-[#EFE9DF]">
-              <div>
-                <h3 className="text-base font-black text-[#1F2421]">Conferir & Dividir Conta</h3>
-                <p className="text-xs text-neutral-500">Mesa {table.number} • Total acumulado</p>
-              </div>
-              <button
-                onClick={() => setIsSplitModalOpen(false)}
-                className="text-neutral-400 hover:text-neutral-700 p-1"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Total Geral da Mesa */}
-            <div className="my-4 p-4 rounded-2xl bg-[#F9F6F0] border border-[#EFE9DF] text-center">
-              <p className="text-xs font-semibold text-neutral-500">Total Geral da Mesa</p>
-              <p className="text-3xl font-black text-[#C83E2B]">R$ {totalTableConsumption.toFixed(2)}</p>
-              <p className="text-[11px] text-neutral-400 mt-1">
-                (O pagamento é feito diretamente ao garçom ou no caixa)
-              </p>
-            </div>
-
-            {/* Alternância de Modo de Divisão */}
-            <div className="flex rounded-xl bg-neutral-100 p-1 mb-4 text-xs font-bold">
-              <button
-                onClick={() => setSplitMode("igual")}
-                className={`flex-1 py-1.5 rounded-lg transition-all ${
-                  splitMode === "igual" ? "bg-white text-neutral-900 shadow-xs" : "text-neutral-500"
-                }`}
-              >
-                Racha Igual
-              </button>
-              <button
-                onClick={() => setSplitMode("flexivel")}
-                className={`flex-1 py-1.5 rounded-lg transition-all ${
-                  splitMode === "flexivel" ? "bg-white text-neutral-900 shadow-xs" : "text-neutral-500"
-                }`}
-              >
-                Por Comandas
-              </button>
-            </div>
-
-            {splitMode === "igual" ? (
-              <div className="space-y-3 py-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-neutral-700">Dividir com quantas pessoas?</span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setSplitPeopleCount(Math.max(1, splitPeopleCount - 1))}
-                      className="w-7 h-7 rounded-lg bg-neutral-100 flex items-center justify-center font-bold"
-                    >
-                      -
-                    </button>
-                    <span className="font-bold text-sm w-4 text-center">{splitPeopleCount}</span>
-                    <button
-                      onClick={() => setSplitPeopleCount(splitPeopleCount + 1)}
-                      className="w-7 h-7 rounded-lg bg-[#C83E2B] text-white flex items-center justify-center font-bold"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-[#FDF2F0] rounded-xl border border-[#FADCD7] flex items-center justify-between text-sm">
-                  <span className="font-bold text-neutral-800">Valor por pessoa:</span>
-                  <span className="font-black text-[#C83E2B] text-lg">
-                    R$ {(totalTableConsumption / splitPeopleCount).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-2 py-2">
-                <p className="text-xs text-neutral-500 mb-1">Valores individuais de cada comanda:</p>
-                {table.comandas.map((c) => (
-                  <div
-                    key={c.id}
-                    className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 border border-neutral-100 text-xs"
-                  >
-                    <span className="font-bold text-neutral-800">👤 {c.customerName}</span>
-                    <span className="font-black text-[#C83E2B]">R$ {c.total.toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="mt-5 pt-3 border-t border-[#EFE9DF]">
-              <button
-                onClick={() => {
-                  onCallWaiter(table.number, "Pediu a conta para pagamento");
-                  setIsSplitModalOpen(false);
-                  alert("🧾 Solicitação de conta enviada ao garçom! Ele levará a maquininha até sua mesa.");
-                }}
-                className="w-full bg-[#1F2421] hover:bg-neutral-800 text-white font-bold text-xs py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <CreditCard className="w-4 h-4 text-[#F4A261]" />
-                <span>Chamar Garçom com a Maquininha</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <BillSplitModal
+          table={table}
+          settings={settings}
+          activeComandaId={activeComandaId}
+          onClose={() => setIsSplitModalOpen(false)}
+          onCallWaiter={onCallWaiter}
+          onAddSubcomanda={onAddSubcomanda}
+          onRegisterPayment={onRegisterPayment}
+        />
       )}
 
       {/* Modal de Personalização do Produto / Substituições e Observações */}
