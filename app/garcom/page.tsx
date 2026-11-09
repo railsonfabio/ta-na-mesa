@@ -240,6 +240,167 @@ export default function GarcomPage() {
     syncState(updatedTables, updatedOrders, notif);
   };
 
+  // Fase 2: Mover Item entre Comandas / Mesas (conforme Stitch mover_item_comanda_gar_om)
+  const handleMoveItemBetweenComandas = (params: {
+    sourceTableNumber: number;
+    sourceComandaId: string;
+    itemId: string;
+    quantityToMove: number;
+    destinationType: "same_table_comanda" | "other_table_comanda" | "new_comanda";
+    targetTableNumber: number;
+    targetComandaId?: string;
+    newComandaName?: string;
+  }) => {
+    const {
+      sourceTableNumber,
+      sourceComandaId,
+      itemId,
+      quantityToMove,
+      destinationType,
+      targetTableNumber,
+      targetComandaId,
+      newComandaName,
+    } = params;
+
+    let movedItem: CartItem | null = null;
+    let sourceComandaName = "";
+    let targetComandaName = "";
+
+    // 1. Remove ou decrementa da comanda de origem
+    const updatedTablesAfterSource = tables.map((tbl) => {
+      if (tbl.number === sourceTableNumber) {
+        const updatedComandas = tbl.comandas.map((cmd) => {
+          if (cmd.id === sourceComandaId) {
+            sourceComandaName = cmd.customerName;
+            const targetItem = cmd.items.find((it) => it.id === itemId);
+            if (targetItem) {
+              const movingQty = Math.min(targetItem.quantity, quantityToMove);
+              movedItem = { ...targetItem, quantity: movingQty };
+
+              let newItems: CartItem[] = [];
+              if (targetItem.quantity > movingQty) {
+                newItems = cmd.items.map((it) =>
+                  it.id === itemId
+                    ? { ...it, quantity: it.quantity - movingQty }
+                    : it
+                );
+              } else {
+                newItems = cmd.items.filter((it) => it.id !== itemId);
+              }
+              const newTotal = Math.max(
+                0,
+                cmd.total - targetItem.price * movingQty
+              );
+              return {
+                ...cmd,
+                items: newItems,
+                total: newTotal,
+              };
+            }
+          }
+          return cmd;
+        });
+        return { ...tbl, comandas: updatedComandas };
+      }
+      return tbl;
+    });
+
+    if (!movedItem) return;
+
+    // 2. Adiciona na comanda de destino (ou cria nova comanda se necessário)
+    const finalTables = updatedTablesAfterSource.map((tbl) => {
+      if (tbl.number === targetTableNumber) {
+        let updatedComandas = [...tbl.comandas];
+
+        if (destinationType === "new_comanda" || !targetComandaId) {
+          const finalName =
+            newComandaName?.trim() ||
+            `Comanda ${tbl.comandas.length + 1}`;
+          targetComandaName = finalName;
+          const newCmdId = `c-t${targetTableNumber}-${Date.now()}`;
+          const newComanda: any = {
+            id: newCmdId,
+            tableId: tbl.id,
+            customerName: finalName,
+            isConnectedViaPhone: true,
+            status: "aberta" as const,
+            items: [movedItem!],
+            total: (movedItem as CartItem).price * (movedItem as CartItem).quantity,
+            paidAmount: 0,
+          };
+          updatedComandas.push(newComanda);
+        } else {
+          updatedComandas = updatedComandas.map((cmd) => {
+            if (cmd.id === targetComandaId) {
+              targetComandaName = cmd.customerName;
+              const existingItemIdx = cmd.items.findIndex(
+                (it) =>
+                  it.productId === movedItem!.productId &&
+                  (it.notes || "") === (movedItem!.notes || "")
+              );
+              let newItems = [...cmd.items];
+              if (existingItemIdx >= 0) {
+                newItems[existingItemIdx] = {
+                  ...newItems[existingItemIdx],
+                  quantity:
+                    newItems[existingItemIdx].quantity + movedItem!.quantity,
+                };
+              } else {
+                newItems.push({
+                  ...movedItem!,
+                  id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+                });
+              }
+              return {
+                ...cmd,
+                items: newItems,
+                total:
+                  cmd.total +
+                  movedItem!.price * movedItem!.quantity,
+              };
+            }
+            return cmd;
+          });
+        }
+
+        return {
+          ...tbl,
+          status: "ocupada" as const,
+          comandas: updatedComandas,
+        };
+      }
+      return tbl;
+    });
+
+    // 3. Atualiza os pedidos ativos da cozinha para refletir a nova comanda / mesa
+    const updatedOrders = orders.map((ord) => {
+      if (
+        ord.tableNumber === sourceTableNumber &&
+        ord.comandaName === sourceComandaName &&
+        ord.status !== "entregue"
+      ) {
+        const itemIdx = ord.items.findIndex(
+          (it) => it.id === itemId || it.productId === movedItem!.productId
+        );
+        if (itemIdx >= 0) {
+          return {
+            ...ord,
+            tableNumber: targetTableNumber,
+            comandaName: targetComandaName || ord.comandaName,
+            customerName: targetComandaName || ord.customerName,
+          };
+        }
+      }
+      return ord;
+    });
+
+    const notif = `🔁 Garçom moveu ${(movedItem as CartItem).quantity}x "${(movedItem as CartItem).name}" de Mesa ${sourceTableNumber} [${sourceComandaName}] para Mesa ${targetTableNumber} [${targetComandaName}]!`;
+    syncState(finalTables, updatedOrders, notif);
+    alert(
+      `✅ ${(movedItem as CartItem).quantity}x "${(movedItem as CartItem).name}" transferido com sucesso para a comanda de "${targetComandaName}" (Mesa ${targetTableNumber})!`
+    );
+  };
+
   const handleClearTableCall = (tableNumber: number) => {
     const updated = tables.map((t) =>
       t.number === tableNumber
@@ -392,6 +553,7 @@ export default function GarcomPage() {
         onAddSubcomanda={handleAddSubcomanda}
         onAddItemToComanda={handleAddItemToComanda}
         onRemoveItemFromComanda={handleRemoveItemFromComanda}
+        onMoveItemBetweenComandas={handleMoveItemBetweenComandas}
         onCloseComanda={handleCloseComanda}
         onTransferComanda={handleTransferComanda}
         onAlertKitchenPriority={handleAlertKitchenPriority}

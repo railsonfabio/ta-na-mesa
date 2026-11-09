@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { StockItem, Supplier, FinancialExpense, Order } from "../lib/types";
 import { INITIAL_STOCK, INITIAL_SUPPLIERS, INITIAL_EXPENSES, RESTAURANT_INFO } from "../lib/mock-data";
 import { StoreSettings } from "../lib/server-db";
+import { FinanceChefiaView } from "./FinanceChefiaView";
 import {
   Package,
   Truck,
@@ -53,7 +54,9 @@ export function InventoryAndFinanceTab({
   onUpdateSuppliers,
   onUpdateExpenses,
 }: InventoryAndFinanceTabProps) {
-  const [activeSubTab, setActiveSubTab] = useState<"estoque" | "fornecedores" | "financeiro">("estoque");
+  const [activeSubTab, setActiveSubTab] = useState<
+    "estoque" | "fornecedores" | "financeiro" | "saas_retiradas"
+  >("estoque");
 
   // Dados Locais com Fallback nos Mocks Iniciais e sincronização contínua com o servidor
   const [stockList, setStockList] = useState<StockItem[]>(initialStockProp || INITIAL_STOCK);
@@ -429,6 +432,19 @@ export function InventoryAndFinanceTab({
               </span>
             )}
           </button>
+
+          <button
+            onClick={() => setActiveSubTab("saas_retiradas")}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
+              activeSubTab === "saas_retiradas"
+                ? "bg-[#CA000A] text-white shadow-xs"
+                : "text-neutral-600 hover:text-neutral-900 hover:bg-white/60"
+            }`}
+            title="Financeiro da Chefia: Resumo de valores, taxa Tá na Mesa (0.8% + R$ 1) e retirada via Pix"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Retiradas Chefia (SaaS)</span>
+          </button>
         </div>
       </div>
 
@@ -629,6 +645,13 @@ export function InventoryAndFinanceTab({
             </div>
           </div>
         </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* SUB-ABA 4: RETIRADAS DA CHEFIA & TAXA SAAS TÁ NA MESA (Fase 5: Stitch)    */}
+      {/* ========================================================================= */}
+      {activeSubTab === "saas_retiradas" && (
+        <FinanceChefiaView orders={orders} storeName={storeName} />
       )}
 
       {/* ========================================================================= */}

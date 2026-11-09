@@ -6,6 +6,7 @@ import { PRODUCTS, CATEGORIES } from "../lib/mock-data";
 import { TableQrModal } from "./TableQrModal";
 import { ProductDetailModal } from "./ProductDetailModal";
 import { CloseComandaModal } from "./CloseComandaModal";
+import { MoveItemModal } from "./MoveItemModal";
 import {
   UserCheck,
   Plus,
@@ -46,6 +47,16 @@ interface WaiterViewProps {
     }
   ) => void;
   onRemoveItemFromComanda?: (tableNumber: number, comandaId: string, itemId: string) => void;
+  onMoveItemBetweenComandas?: (params: {
+    sourceTableNumber: number;
+    sourceComandaId: string;
+    itemId: string;
+    quantityToMove: number;
+    destinationType: "same_table_comanda" | "other_table_comanda" | "new_comanda";
+    targetTableNumber: number;
+    targetComandaId?: string;
+    newComandaName?: string;
+  }) => void;
   onCloseComanda: (tableNumber: number, comandaId: string) => void;
   onTransferComanda?: (fromTableNumber: number, comandaId: string, toTableNumber: number) => void;
   onAlertKitchenPriority?: (tableNumber: number, comandaName: string) => void;
@@ -96,6 +107,7 @@ export function WaiterView({
   onAddSubcomanda,
   onAddItemToComanda,
   onRemoveItemFromComanda,
+  onMoveItemBetweenComandas,
   onCloseComanda,
   onTransferComanda,
   onAlertKitchenPriority,
@@ -120,6 +132,13 @@ export function WaiterView({
   const [newClientName, setNewClientName] = useState("");
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
+
+  // Modal de Mover Item entre Comandas / Mesas (conforme Stitch mover_item_comanda_gar_om)
+  const [movingItemData, setMovingItemData] = useState<{
+    item: CartItem;
+    sourceTable: Table;
+    sourceComanda: any;
+  } | null>(null);
 
   // Modal de Personalização BK / McDonald's para o Lanche Selecionado
   const [customizingProduct, setCustomizingProduct] = useState<ProductItem | null>(null);
@@ -723,30 +742,51 @@ export function WaiterView({
                             R$ {(it.price * it.quantity).toFixed(2)}
                           </span>
 
-                          {/* BOTÃO DE RETIRADA / CANCELAMENTO DE ITEM (Solicitado pelo Fábio) */}
-                          {onRemoveItemFromComanda && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (
-                                  confirm(
-                                    `Deseja estornar/cancelar 1x "${it.name}" da comanda de ${activeComanda.customerName}?`
-                                  )
-                                ) {
-                                  onRemoveItemFromComanda(
-                                    currentTable.number,
-                                    activeComanda.id,
-                                    it.id
-                                  );
+                          {/* AÇÕES NO ITEM: MOVER ENTRE COMANDAS / MESAS E CANCELAR */}
+                          <div className="flex items-center gap-1.5">
+                            {onMoveItemBetweenComandas && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setMovingItemData({
+                                    item: it,
+                                    sourceTable: currentTable,
+                                    sourceComanda: activeComanda,
+                                  })
                                 }
-                              }}
-                              className="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs"
-                              title="Estornar / Cancelar este item da comanda"
-                            >
-                              <Trash2 className="w-3 h-3 text-rose-600" />
-                              <span>Cancelar</span>
-                            </button>
-                          )}
+                                className="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs"
+                                title="Mover este item para outra comanda ou mesa"
+                              >
+                                <ArrowRightLeft className="w-3 h-3 text-blue-600" />
+                                <span>Mover</span>
+                              </button>
+                            )}
+
+                            {/* BOTÃO DE RETIRADA / CANCELAMENTO DE ITEM (Solicitado pelo Fábio) */}
+                            {onRemoveItemFromComanda && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (
+                                    confirm(
+                                      `Deseja estornar/cancelar 1x "${it.name}" da comanda de ${activeComanda.customerName}?`
+                                    )
+                                  ) {
+                                    onRemoveItemFromComanda(
+                                      currentTable.number,
+                                      activeComanda.id,
+                                      it.id
+                                    );
+                                  }
+                                }}
+                                className="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs"
+                                title="Estornar / Cancelar este item da comanda"
+                              >
+                                <Trash2 className="w-3 h-3 text-rose-600" />
+                                <span>Cancelar</span>
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -1165,6 +1205,23 @@ export function WaiterView({
             alert(
               `✅ Comanda de "${activeComanda.customerName}" quitada via ${paymentData.paymentMethod.toUpperCase()} com total de R$ ${paymentData.total.toFixed(2)} (Taxa de Garçom: R$ ${paymentData.serviceFee.toFixed(2)})!`
             );
+          }}
+        />
+      )}
+
+      {movingItemData && (
+        <MoveItemModal
+          isOpen={Boolean(movingItemData)}
+          onClose={() => setMovingItemData(null)}
+          item={movingItemData.item}
+          sourceTable={movingItemData.sourceTable}
+          sourceComanda={movingItemData.sourceComanda}
+          allTables={tables}
+          onConfirmMove={(params) => {
+            if (onMoveItemBetweenComandas) {
+              onMoveItemBetweenComandas(params);
+            }
+            setMovingItemData(null);
           }}
         />
       )}

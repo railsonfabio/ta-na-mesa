@@ -8,6 +8,7 @@ import { ReviewModal } from "../components/ReviewModal";
 import { AuthModal, UserProfile } from "../components/AuthModal";
 import { OrderHistoryModal } from "../components/OrderHistoryModal";
 import { TablePairingModal } from "../components/TablePairingModal";
+import { LiveCustomerChatModal } from "../components/LiveCustomerChatModal";
 import {
   loadInitialData,
   saveStateToStorage,
@@ -19,7 +20,7 @@ import { Table, Order, ProductItem, CartItem } from "../lib/types";
 import { INITIAL_TABLES, INITIAL_ORDERS, PRODUCTS, RESTAURANT_INFO } from "../lib/mock-data";
 import { StoreSettings } from "../lib/server-db";
 import Link from "next/link";
-import { Store, ShieldCheck } from "lucide-react";
+import { Store, ShieldCheck, Compass } from "lucide-react";
 
 export default function Home() {
   const [mode, setMode] = useState<"mesa" | "delivery">("delivery");
@@ -45,6 +46,7 @@ export default function Home() {
   });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [reorderCartItems, setReorderCartItems] = useState<CartItem[] | null>(null);
 
   // Review Modal state
@@ -308,6 +310,7 @@ export default function Home() {
           user={user}
           onOpenAuth={() => setIsAuthModalOpen(true)}
           onOpenHistory={() => setIsHistoryModalOpen(true)}
+          onOpenChat={() => setIsChatModalOpen(true)}
         />
 
         {/* Experiência do Cliente na Mesa ou no Delivery */}
@@ -341,6 +344,14 @@ export default function Home() {
         </p>
 
         <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
+          <Link
+            href="/explorar"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-neutral-600 hover:text-[#C83E2B] bg-white hover:bg-red-50 px-3 py-1.5 rounded-full transition-colors border border-neutral-300 shadow-2xs"
+          >
+            <Compass className="w-3.5 h-3.5 text-[#C83E2B]" />
+            <span>🍽️ Explorar outros Restaurantes da Rede</span>
+          </Link>
+
           <Link
             href="/gestor"
             className="inline-flex items-center gap-1.5 text-[11px] font-bold text-neutral-500 hover:text-[#C83E2B] bg-neutral-100 hover:bg-[#FDF2F0] px-3 py-1.5 rounded-full transition-colors border border-neutral-200"
@@ -396,6 +407,15 @@ export default function Home() {
           onSubmitReview={handleSaveReview}
         />
       )}
+
+      {/* Chat ao Vivo Cliente <-> Loja (Fase 4: Stitch chat_ao_vivo_cliente_loja_2) */}
+      <LiveCustomerChatModal
+        isOpen={isChatModalOpen}
+        onClose={() => setIsChatModalOpen(false)}
+        storeName={settings?.storeName || RESTAURANT_INFO.name}
+        customerName={user?.name || "Cliente"}
+        tableNumber={mode === "mesa" ? activeTableNumber : undefined}
+      />
     </div>
   );
 }

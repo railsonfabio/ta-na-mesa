@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Logo } from "./Logo";
-import { Utensils, Bike, QrCode, User, Clock, KeyRound } from "lucide-react";
+import { Utensils, Bike, QrCode, User, Clock, KeyRound, Compass, MessageCircle } from "lucide-react";
 import { UserProfile } from "./AuthModal";
 
 interface CustomerHeaderProps {
@@ -16,6 +17,7 @@ interface CustomerHeaderProps {
   user?: UserProfile | null;
   onOpenAuth?: () => void;
   onOpenHistory?: () => void;
+  onOpenChat?: () => void;
 }
 
 export function CustomerHeader({
@@ -29,6 +31,7 @@ export function CustomerHeader({
   user,
   onOpenAuth,
   onOpenHistory,
+  onOpenChat,
 }: CustomerHeaderProps) {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#EFE9DF] shadow-xs">
@@ -73,6 +76,16 @@ export function CustomerHeader({
               </button>
             </div>
 
+            {/* Atalho Explorar Restaurantes (Fase 3: Stitch explorar_restaurantes) */}
+            <Link
+              href="/explorar"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold transition-colors cursor-pointer border border-neutral-200"
+              title="Descubra e explore todos os restaurantes da rede"
+            >
+              <Compass className="w-3.5 h-3.5 text-[#C83E2B]" />
+              <span className="hidden sm:inline">Explorar</span>
+            </Link>
+
             {/* Autenticação & Meus Pedidos */}
             {user?.isLoggedIn ? (
               <div className="flex items-center gap-1">
@@ -107,6 +120,19 @@ export function CustomerHeader({
                   <span className="hidden sm:inline">Entrar c/ WhatsApp</span>
                 </button>
               )
+            )}
+
+            {/* Chat ao Vivo com a Loja / Garçom (Fase 4: Stitch chat_ao_vivo_cliente_loja_2) */}
+            {onOpenChat && (
+              <button
+                onClick={onOpenChat}
+                className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-[#CA000A] border border-red-200 transition-colors cursor-pointer text-xs font-bold"
+                title="Abrir Chat ao Vivo com o Atendimento da Loja"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline text-[11px]">Chat</span>
+                <span className="size-2 rounded-full bg-emerald-500 absolute -top-0.5 -right-0.5 border border-white"></span>
+              </button>
             )}
 
             {/* Atalho QR Code para abrir e testar no celular */}

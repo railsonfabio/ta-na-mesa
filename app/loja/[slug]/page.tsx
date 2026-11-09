@@ -11,6 +11,7 @@ import { ReviewModal } from "../../../components/ReviewModal";
 import { AuthModal, UserProfile } from "../../../components/AuthModal";
 import { OrderHistoryModal } from "../../../components/OrderHistoryModal";
 import { TablePairingModal } from "../../../components/TablePairingModal";
+import { LiveCustomerChatModal } from "../../../components/LiveCustomerChatModal";
 import { getSupabaseBrowserClient } from "../../../lib/supabase-client";
 import {
   useSyncStore,
@@ -61,6 +62,7 @@ function TenantStorefrontContent() {
   });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [reorderCartItems, setReorderCartItems] = useState<CartItem[] | null>(
     null
   );
@@ -433,6 +435,7 @@ function TenantStorefrontContent() {
           user={user}
           onOpenAuth={() => setIsAuthModalOpen(true)}
           onOpenHistory={() => setIsHistoryModalOpen(true)}
+          onOpenChat={() => setIsChatModalOpen(true)}
         />
 
         <main>
@@ -526,6 +529,15 @@ function TenantStorefrontContent() {
           onSubmitReview={handleSaveReview}
         />
       )}
+
+      {/* Chat ao Vivo Cliente <-> Loja (Fase 4: Stitch chat_ao_vivo_cliente_loja_2) */}
+      <LiveCustomerChatModal
+        isOpen={isChatModalOpen}
+        onClose={() => setIsChatModalOpen(false)}
+        storeName={settings?.storeName || RESTAURANT_INFO.name}
+        customerName={user?.name || "Cliente"}
+        tableNumber={mode === "mesa" ? activeTableNumber : undefined}
+      />
     </div>
   );
 }
